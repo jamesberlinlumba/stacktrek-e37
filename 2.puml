@@ -1,0 +1,60 @@
+@startuml
+
+participant Admin
+participant UI
+participant User
+participant Movies
+participant Showtimes
+participant Seats
+participant Reservation
+participant Payments
+
+===search result movies==
+UI -> Movies : GET /movies?title
+Movies -> UI : 200
+
+===movie including its details, and available showtimes==
+UI -> Movies : GET /movie:id/info
+Movies -> UI : 200
+
+===select showtimes==
+Movies -> Showtimes : GET /movie:id/info/showtime:id
+Showtimes -> Movies : 200
+
+===select seat==
+Showtimes -> Seats : GET /movie:id/info/showtime:id/seat:id
+Seats -> Showtimes : 200
+
+===create reservation==
+UI -> Reservation : POST /reservation
+Reservation -> Movies : GET /movie:id/info/showtime:id/seat:id
+Movies -> Reservation : 200
+Reservation -> UI : 201
+
+===checkout==
+UI -> Payments : POST /payment
+Payments -> Reservation : GET /reservation:id
+Reservation -> Payments : 200
+Payments -> UI : 201
+
+===add movie==
+Admin -> Movies : POST /movie
+Movies -> Admin : 201
+
+===remove movie==
+Admin -> Movies : DELETE /movie:id
+Movies -> Admin : 204
+
+===add showtimes==
+Admin -> Showtimes : POST /movie:id/showtime
+Showtimes -> Admin : 201
+
+===edit showtime==
+Admin -> Showtimes : PUT /movie:id/showtime:id
+Showtimes -> Admin : 204
+
+===delete showtime==
+Admin -> Showtimes : DELETE /movie:id/showtime:id
+Showtimes -> Admin : 204
+
+@enduml

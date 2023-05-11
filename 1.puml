@@ -1,0 +1,47 @@
+@startuml
+
+participant UI
+participant User
+participant Bookstore
+participant Cart
+participant Payment
+
+===view books==
+UI -> Bookstore : GET /books
+Bookstore -> UI : 200
+
+===view selected book==
+UI -> Bookstore : GET /book:id
+Bookstore -> UI : 200
+
+===create cart for ordered book==
+UI -> Cart : POST /cart
+Cart -> Bookstore : GET /book:id
+Bookstore -> Cart : 200
+Cart -> UI : 201
+
+===remove cart==
+UI -> Cart : DELETE /cart:id
+Cart -> UI : 204
+
+===add another book to cart==
+UI -> Cart : PUT /cart:id
+Cart -> Bookstore : GET /book:id
+Bookstore -> Cart : 200
+Cart -> UI : 201
+
+===increase quantity==
+UI -> Cart : POST /cart:id/book:id
+Cart -> UI : 204
+
+===decrease quantity/remove book from cart==
+UI -> Cart : DELETE /cart:id/book:id
+Cart -> UI : 204
+
+===buy==
+UI -> Payment : POST /payment
+Payment -> Cart : GET /cart:id
+Cart -> Payment : 200
+Payment -> UI : 201
+
+@enduml
